@@ -437,7 +437,7 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
 {
 	//HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
     inbuffPtr = &buffer_adc[0];
-    outbuffPtr = &buffer_dac[HALFBUFFSIZE];
+    outbuffPtr = &buffer_dac[0];
     process_DSP();
 }
 // Called when buffer is completely filled
@@ -446,7 +446,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 	//HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
     inbuffPtr = &buffer_adc[HALFBUFFSIZE];
-    outbuffPtr = &buffer_dac[0];
+    outbuffPtr = &buffer_dac[HALFBUFFSIZE];
     process_DSP();
 }
 // Called when first half of buffer is filled

@@ -1231,7 +1231,7 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
  80009b0:	4b05      	ldr	r3, [pc, #20]	; (80009c8 <HAL_ADC_ConvHalfCpltCallback+0x20>)
  80009b2:	4a06      	ldr	r2, [pc, #24]	; (80009cc <HAL_ADC_ConvHalfCpltCallback+0x24>)
  80009b4:	601a      	str	r2, [r3, #0]
-    outbuffPtr = &buffer_dac[HALFBUFFSIZE];
+    outbuffPtr = &buffer_dac[0];
  80009b6:	4b06      	ldr	r3, [pc, #24]	; (80009d0 <HAL_ADC_ConvHalfCpltCallback+0x28>)
  80009b8:	4a06      	ldr	r2, [pc, #24]	; (80009d4 <HAL_ADC_ConvHalfCpltCallback+0x2c>)
  80009ba:	601a      	str	r2, [r3, #0]
@@ -1245,7 +1245,7 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
  80009c8:	20000c04 	.word	0x20000c04
  80009cc:	20000204 	.word	0x20000204
  80009d0:	20000c08 	.word	0x20000c08
- 80009d4:	20000984 	.word	0x20000984
+ 80009d4:	20000704 	.word	0x20000704
 
 080009d8 <HAL_ADC_ConvCpltCallback>:
 // Called when buffer is completely filled
@@ -1264,7 +1264,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
  80009ea:	4b06      	ldr	r3, [pc, #24]	; (8000a04 <HAL_ADC_ConvCpltCallback+0x2c>)
  80009ec:	4a06      	ldr	r2, [pc, #24]	; (8000a08 <HAL_ADC_ConvCpltCallback+0x30>)
  80009ee:	601a      	str	r2, [r3, #0]
-    outbuffPtr = &buffer_dac[0];
+    outbuffPtr = &buffer_dac[HALFBUFFSIZE];
  80009f0:	4b06      	ldr	r3, [pc, #24]	; (8000a0c <HAL_ADC_ConvCpltCallback+0x34>)
  80009f2:	4a07      	ldr	r2, [pc, #28]	; (8000a10 <HAL_ADC_ConvCpltCallback+0x38>)
  80009f4:	601a      	str	r2, [r3, #0]
@@ -1279,7 +1279,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
  8000a04:	20000c04 	.word	0x20000c04
  8000a08:	20000484 	.word	0x20000484
  8000a0c:	20000c08 	.word	0x20000c08
- 8000a10:	20000704 	.word	0x20000704
+ 8000a10:	20000984 	.word	0x20000984
 
 08000a14 <HAL_DAC_ConvHalfCpltCallbackCh1>:
 // Called when first half of buffer is filled
