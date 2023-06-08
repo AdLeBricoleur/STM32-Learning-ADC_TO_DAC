@@ -1,10 +1,11 @@
 #MicroXplorer Configuration settings - do not modify
 ADC1.Channel-1\#ChannelRegularConversion=ADC_CHANNEL_5
+ADC1.ClockPrescaler=ADC_CLOCK_ASYNC_DIV10
 ADC1.CommonPathInternal=null|null|null|null
 ADC1.ContinuousConvMode=ENABLE
 ADC1.DMAContinuousRequests=ENABLE
 ADC1.ExternalTrigConv=ADC_SOFTWARE_START
-ADC1.IPParameters=Rank-1\#ChannelRegularConversion,master,Channel-1\#ChannelRegularConversion,SamplingTime-1\#ChannelRegularConversion,OffsetNumber-1\#ChannelRegularConversion,NbrOfConversionFlag,ContinuousConvMode,DMAContinuousRequests,ExternalTrigConv,CommonPathInternal
+ADC1.IPParameters=Rank-1\#ChannelRegularConversion,master,Channel-1\#ChannelRegularConversion,SamplingTime-1\#ChannelRegularConversion,OffsetNumber-1\#ChannelRegularConversion,NbrOfConversionFlag,ContinuousConvMode,DMAContinuousRequests,ExternalTrigConv,ClockPrescaler,CommonPathInternal
 ADC1.NbrOfConversionFlag=1
 ADC1.OffsetNumber-1\#ChannelRegularConversion=ADC_OFFSET_NONE
 ADC1.Rank-1\#ChannelRegularConversion=1
@@ -28,7 +29,7 @@ Dma.DAC_CH1.0.Direction=DMA_MEMORY_TO_PERIPH
 Dma.DAC_CH1.0.Instance=DMA1_Channel3
 Dma.DAC_CH1.0.MemDataAlignment=DMA_MDATAALIGN_HALFWORD
 Dma.DAC_CH1.0.MemInc=DMA_MINC_ENABLE
-Dma.DAC_CH1.0.Mode=DMA_CIRCULAR
+Dma.DAC_CH1.0.Mode=DMA_NORMAL
 Dma.DAC_CH1.0.PeriphDataAlignment=DMA_PDATAALIGN_HALFWORD
 Dma.DAC_CH1.0.PeriphInc=DMA_PINC_DISABLE
 Dma.DAC_CH1.0.Priority=DMA_PRIORITY_LOW

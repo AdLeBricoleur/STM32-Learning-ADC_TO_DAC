@@ -32,8 +32,8 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define TIM2_CLK 80000000
-#define SIZE_BUF 800
-#define F_SIGNAL 1000
+#define SIZE_BUF 640
+#define F_SIGNAL 667
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -53,7 +53,10 @@ TIM_HandleTypeDef htim2;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-uint32_t adc_buf[SIZE_BUF]= {0};
+volatile uint32_t flag_dma = 0;
+volatile uint32_t flag_state = 0;
+uint32_t buffer_1[SIZE_BUF]= {0};
+uint32_t buffer_2[SIZE_BUF]= {0};
 static uint32_t TIM2_Ticks = TIM2_CLK / (SIZE_BUF * F_SIGNAL);
 /* USER CODE END PV */
 
@@ -109,18 +112,67 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
-  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc_buf, SIZE_BUF);
-  HAL_Delay(1);
-  //HAL_ADC_Stop_DMA(&hadc1);
-  HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_1, (uint32_t*)adc_buf, SIZE_BUF, DAC_ALIGN_12B_R);
   HAL_TIM_Base_Start(&htim2);
-  //HAL_DAC_Stop_DMA(&hdac1, DAC_CHANNEL_1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+//	  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)buffer_1, SIZE_BUF);
+//	  HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_1, (uint32_t*)buffer_2, SIZE_BUF, DAC_ALIGN_12B_R);
+//	  HAL_Delay(2);
+//	  HAL_ADC_Stop_DMA(&hadc1);
+//	  HAL_DAC_Stop_DMA(&hdac1, DAC_CHANNEL_1);
+//	  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)buffer_2, SIZE_BUF);
+//	  HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_1, (uint32_t*)buffer_1, SIZE_BUF, DAC_ALIGN_12B_R);
+//	  HAL_Delay(2);
+//	  HAL_ADC_Stop_DMA(&hadc1);
+//	  HAL_DAC_Stop_DMA(&hdac1, DAC_CHANNEL_1);
+
+	  switch ( flag_state )
+	  {
+	      case 0:
+	    	  if(flag_dma==0)
+	    	      {
+	    	  		__HAL_TIM_SET_COUNTER(&htim2,0);
+	    	  		HAL_ADC_Start_DMA(&hadc1, (uint32_t*)buffer_1, SIZE_BUF);
+	    	      	HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_1, (uint32_t*)buffer_2, SIZE_BUF, DAC_ALIGN_12B_R);
+	    	      	flag_dma=1;
+	    	      }
+	          break;
+	      case 1:
+	    	    if (flag_dma==0)
+	    	    {
+	    	    	__HAL_TIM_SET_COUNTER(&htim2,0);
+	    	    	HAL_ADC_Start_DMA(&hadc1, (uint32_t*)buffer_2, SIZE_BUF);
+	    	    	HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_1, (uint32_t*)buffer_1, SIZE_BUF, DAC_ALIGN_12B_R);
+	    	    	flag_dma=1;
+	    	    }
+	          break;
+	      default:
+	    	  break;
+	  }
+//	if(flag_state==0 && flag_dma==0)
+//    {
+//		__HAL_TIM_SET_COUNTER(&htim2,0);
+//		HAL_ADC_Start_DMA(&hadc1, (uint32_t*)buffer_1, SIZE_BUF);
+//    	HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_1, (uint32_t*)buffer_2, SIZE_BUF, DAC_ALIGN_12B_R);
+////    	HAL_TIM_Base_Start(&htim2);
+////    	__HAL_TIM_SET_COUNTER(&htim2,0);
+//    	flag_dma=1;
+//    }
+//
+//    if (flag_state==1 && flag_dma==0)
+//    {
+//    	__HAL_TIM_SET_COUNTER(&htim2,0);
+//    	HAL_ADC_Start_DMA(&hadc1, (uint32_t*)buffer_2, SIZE_BUF);
+//    	HAL_DAC_Start_DMA(&hdac1, DAC_CHANNEL_1, (uint32_t*)buffer_1, SIZE_BUF, DAC_ALIGN_12B_R);
+////    	HAL_TIM_Base_Start(&htim2);
+//    	flag_dma=1;
+//    }
+
+    HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -199,7 +251,7 @@ static void MX_ADC1_Init(void)
   /** Common config
   */
   hadc1.Instance = ADC1;
-  hadc1.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV1;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV10;
   hadc1.Init.Resolution = ADC_RESOLUTION_12B;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
@@ -434,7 +486,18 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
 	//HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
-	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	//HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	//HAL_ADC_Stop_DMA(&hadc1);
+	HAL_DAC_Stop_DMA(&hdac1, DAC_CHANNEL_1);
+	flag_dma=0;
+	if(flag_state==0)
+	{
+		flag_state = 1;
+	}
+	else
+	{
+		flag_state = 0;
+	}
 }
 // Called when first half of buffer is filled
 void HAL_DAC_ConvHalfCpltCallbackCh1(DAC_HandleTypeDef *hdac)
@@ -445,7 +508,18 @@ void HAL_DAC_ConvHalfCpltCallbackCh1(DAC_HandleTypeDef *hdac)
 void HAL_DAC_ConvCpltCallbackCh1(DAC_HandleTypeDef *hdac)
 {
 	//HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
-	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	//HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	HAL_ADC_Stop_DMA(&hadc1);
+	//HAL_DAC_Stop_DMA(&hdac1, DAC_CHANNEL_1);
+	flag_dma=0;
+	if(flag_state==0)
+	{
+		flag_state = 1;
+	}
+	else
+	{
+		flag_state = 0;
+	}
 }
 /* USER CODE END 4 */
 
